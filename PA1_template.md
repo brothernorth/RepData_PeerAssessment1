@@ -163,3 +163,32 @@ plot(stepsMeanPerInterval_NoMissing, type = "l", xlab = "Interval",
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+```r
+# Create a factor variable with two levels (weekday, weekend-day)
+tmpLT <- as.POSIXlt(sports_data$date, format = "%Y-%m-%d")
+tmpWeekDays <- tmpLT$wday
+tmpWeekDays[tmpWeekDays == 0] = 0
+tmpWeekDays[tmpWeekDays == 6] = 0
+tmpWeekDays[tmpWeekDays != 0] = 1
+tmpWeekDaysFactor <- factor(tmpWeekDays, levels = c(0, 1))
+# Add the factor variable to the data
+sports_data$WD <- tmpWeekDaysFactor
+# Calculate the mean
+stepsMeanPerWeekday <- tapply(sports_data$steps, 
+                              list(sports_data$interval, sports_data$WD), 
+                              mean, na.rm = T)
+
+par(mfrow = c(2, 1))
+# Display the 2 plots
+with(sports_data, {
+    par(mai = c(0, 1, 1, 0))
+    plot(stepsMeanPerWeekday[, 1], type = "l", main = ("Steps vs. Interval"), 
+        xaxt = "n", ylab = "Week ends")
+    title = ("# of Steps v.s. Interval")
+    par(mai = c(1, 1, 0, 0))
+    plot(stepsMeanPerWeekday[, 2], type = "l", xlab = "Interval", ylab = "Week days")
+
+})
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
